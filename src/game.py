@@ -3,6 +3,7 @@ from array import array
 from typing import Literal
 
 from src.utils import decode_ascii_char
+from src.fen_parser import parse_piece_placement
 
 
 BlackPawn   = ord('p')
@@ -44,6 +45,15 @@ class Board:
             'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'
         ]
         pieces = list(map(ord, pieces_str))
+        board.squares = array('b', pieces)
+        return board
+
+    @staticmethod
+    def construct_board_from_fen_string(fen_string):
+        board = Board()
+        fen_parts = fen_string.split(' ')
+        piece_placement_part = fen_parts[0]
+        pieces = parse_piece_placement(piece_placement_part)
         board.squares = array('b', pieces)
         return board
 
