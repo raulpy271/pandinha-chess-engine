@@ -1,12 +1,10 @@
 
 from array import array
-from typing import Optional
+from typing import Literal
 
 from src.utils import decode_ascii_char
 
 
-Piece = int
-EmptySquare = 0
 BlackPawn   = ord('p')
 BlackBishop = ord('b')
 BlackKnight = ord('n')
@@ -19,11 +17,18 @@ WhiteKnight = ord('N')
 WhiteRook   = ord('R')
 WhiteQueen  = ord('Q')
 WhiteKing   = ord('K')
+WhitePieces = (WhitePawn, WhiteBishop, WhiteKnight, WhiteRook, WhiteQueen, WhiteKing)
+
+Piece = int
+Move = list[int, int]
+Player = Literal['White', 'Black']
+EmptySquare = 0
 
 
 class Board:
-    def __init__(self):
+    def __init__(self, player: Player = 'White'):
         self.squares: array[Piece] = array('b', [EmptySquare] * 64) 
+        self.current_player: Player = player
 
     @staticmethod
     def construct_initial_board():
@@ -50,7 +55,10 @@ class Board:
             if i % 8 == 0:
                 current_row += 1
                 board_in_str += f'\n{current_row}| '
-            board_in_str += (decode_ascii_char(piece) + ' ')
+            if piece:
+                board_in_str += (decode_ascii_char(piece) + ' ')
+            else:
+                board_in_str += '  '
         return board_in_str
 
     def _convert_column_to_integer(self, column: str) -> int:
@@ -66,6 +74,52 @@ class Board:
         row_int = int(row_str) - 1
         return (row_int * 8) + column_int
 
+    def _get_pieces_of_the_current_player(self) -> list[int]:
+        pieces = []
+        if self.current_player == 'White':
+            is_current_player_piece = lambda piece: piece in WhitePieces
+        else:
+            is_current_player_piece = lambda piece: (not (piece in WhitePieces)) and not piece == EmptySquare
+        for i, piece in enumerate(self.squares):
+            if is_current_player_piece(piece):
+                pieces.append(i)
+        return pieces
+
     def get_piece(self, position_str: str) -> int:
         position_int = self._get_position_integer(position_str)
         return self.squares[position_int]
+
+    def move_white_pawn(self, piece_index: int) -> list[Move]:
+        moves = []
+        pawn_in_initial_position = piece_index > 7 and piece_index < 16
+        can_move_one_square = self.squares[piece_index + 8] == EmptySquare
+        can_move_two_square = pawn_in_initial_position and can_move_one_square and self.squares[piece_index + 16] == EmptySquare
+        if can_move_one_square:
+            moves.append([piece_index, piece_index + 8])
+        if can_move_two_square:
+            moves.append([piece_index, piece_index + 16])
+        return moves
+
+    def move_pawn(self, piece_index: int) -> list[Move]:
+        if self.current_player == 'White':
+            return self.move_white_pawn(piece_index)
+        else:
+            raise Exception('Not implemented black pawn move')
+
+    def get_possible_moves_of_the_paws(self, pieces_index: list[int]) -> list[Move]:
+        moves = []
+        pawns_index = filter(
+            lambda piece_index: self.squares[piece_index] in [WhitePawn, BlackPawn], 
+            pieces_index
+        )
+        for pawn_index in pawns_index:
+            moves.extend(self.move_pawn(pawn_index))
+        return moves
+
+    def get_possible_moves(self) -> list[Move]:
+        movements = []
+        pieces_to_move = self._get_pieces_of_the_current_player()
+        movements.extend(
+            self.get_possible_moves_of_the_paws(pieces_to_move)
+        )
+        return movements
