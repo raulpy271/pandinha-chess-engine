@@ -57,6 +57,11 @@ class Board:
         board.squares = array('b', pieces)
         return board
 
+    def construct_move_str(self, move: Move) -> str:
+        current_pos_str = self._get_position_str(move[0])
+        next_pos_str = self._get_position_str(move[1])
+        return current_pos_str + next_pos_str
+
     def __str__(self):
         board_in_str =  ' | a b c d e f g h\n' 
         board_in_str += ' -----------------'
@@ -83,6 +88,12 @@ class Board:
         column_int = self._convert_column_to_integer(column_str)
         row_int = int(row_str) - 1
         return (row_int * 8) + column_int
+
+    def _get_position_str(self, position_int: int) -> str:
+        row_int = position_int // 8
+        column_int = position_int % 8
+        column_str = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'][column_int]
+        return f'{column_str}{row_int + 1}'
 
     def _get_pieces_of_the_current_player(self) -> list[int]:
         pieces = []

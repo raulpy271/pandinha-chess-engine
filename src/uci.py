@@ -1,8 +1,11 @@
 
 import sys
 import re
+from random import choice
 
 from src.logger import logger, send_uci_msg
+from src.game import Board
+
 
 Position = str
 MovesInStr = list[str]
@@ -50,6 +53,18 @@ def start_uci_comunication():
                 position, moves = parse_position_command(line)
                 logger.info(f'position: "{position}"')
                 logger.info(f'moves: "{moves}"')
+                if position == 'startpos':
+                    raise Exception(f'Command not found: {line}')
+                else:
+                    current_game = Board.construct_board_from_fen_string(position)
+            elif 'go' in line:
+                moves = current_game.get_possible_moves()
+                if moves:
+                    move = choice(moves)
+                    move_str = current_game.construct_move_str(move)
+                    send_uci_msg(f'bestmove {move_str}')
+                else:
+                    send_uci_msg('info string There\'s any good move')
             elif line == 'quit\n':
                 break
             else:
