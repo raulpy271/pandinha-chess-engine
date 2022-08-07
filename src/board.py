@@ -32,9 +32,9 @@ class Board:
         self.squares: array[Piece] = array('b', [EmptySquare] * 64) 
         self.current_player: Player = player
 
-    @staticmethod
-    def construct_initial_board():
-        board = Board()
+    @classmethod
+    def construct_initial_board(cls):
+        board = cls()
         pieces_str = [
             'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R', 
             'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P',
@@ -49,9 +49,9 @@ class Board:
         board.squares = array('b', pieces)
         return board
 
-    @staticmethod
-    def construct_board_from_fen_string(fen_string):
-        board = Board()
+    @classmethod
+    def construct_board_from_fen_string(cls, fen_string):
+        board = cls()
         fen_parts = fen_string.split(' ')
         piece_placement_part = fen_parts[0]
         pieces = parse_piece_placement(piece_placement_part)

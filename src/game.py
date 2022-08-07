@@ -1,5 +1,6 @@
 
-from src.board import Board, Player, WhitePieces, BlackPieces, Move, EmptySquare, BlackPawn, WhitePawn
+from src.board import BlackRook, Board, Player, WhitePieces, BlackPieces, Move, EmptySquare, BlackPawn, WhitePawn, WhiteRook
+from src.movements import get_all_rook_moves
 
 
 class Game(Board):
@@ -42,7 +43,7 @@ class Game(Board):
         else:
             raise Exception('Not implemented black pawn move')
 
-    def get_possible_moves_of_the_paws(self, pieces_index: list[int]) -> list[Move]:
+    def get_possible_moves_of_the_pawns(self, pieces_index: list[int]) -> list[Move]:
         moves = []
         pawns_index = filter(
             lambda piece_index: self.squares[piece_index] in [WhitePawn, BlackPawn], 
@@ -52,10 +53,23 @@ class Game(Board):
             moves.extend(self.move_pawn(pawn_index))
         return moves
 
+    def get_possible_moves_of_the_rooks(self, pieces_index: list[int]) -> list[Move]:
+        moves = []
+        rooks_index = filter(
+            lambda piece_index: self.squares[piece_index] in [BlackRook, WhiteRook], 
+            pieces_index
+        )
+        for rook_index in rooks_index:
+            moves.extend(get_all_rook_moves(self.squares, rook_index, self.current_player))
+        return moves
+
     def get_possible_moves(self) -> list[Move]:
         movements = []
         pieces_to_move = self._get_pieces_of_the_current_player()
         movements.extend(
-            self.get_possible_moves_of_the_paws(pieces_to_move)
+            self.get_possible_moves_of_the_pawns(pieces_to_move)
+        )
+        movements.extend(
+            self.get_possible_moves_of_the_rooks(pieces_to_move)
         )
         return movements
