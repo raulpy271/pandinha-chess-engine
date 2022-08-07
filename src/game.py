@@ -19,6 +19,7 @@ WhiteRook   = ord('R')
 WhiteQueen  = ord('Q')
 WhiteKing   = ord('K')
 WhitePieces = (WhitePawn, WhiteBishop, WhiteKnight, WhiteRook, WhiteQueen, WhiteKing)
+BlackPieces = (BlackPawn, BlackBishop, BlackKnight, BlackRook, BlackQueen, BlackKing)
 
 Piece = int
 Move = list[int, int]
@@ -100,7 +101,7 @@ class Board:
         if self.current_player == 'White':
             is_current_player_piece = lambda piece: piece in WhitePieces
         else:
-            is_current_player_piece = lambda piece: (not (piece in WhitePieces)) and not piece == EmptySquare
+            is_current_player_piece = lambda piece: piece in BlackPieces
         for i, piece in enumerate(self.squares):
             if is_current_player_piece(piece):
                 pieces.append(i)
@@ -115,10 +116,18 @@ class Board:
         pawn_in_initial_position = piece_index > 7 and piece_index < 16
         can_move_one_square = self.squares[piece_index + 8] == EmptySquare
         can_move_two_square = pawn_in_initial_position and can_move_one_square and self.squares[piece_index + 16] == EmptySquare
+        left_side = piece_index + 8 - 1
+        right_side = piece_index + 8 + 1
+        can_capture_to_left_side = piece_index % 8 != 0 and (self.squares[left_side] in BlackPieces)
+        can_capture_to_right_side = (piece_index + 1) % 8 != 0 and (self.squares[right_side] in BlackPieces)
         if can_move_one_square:
             moves.append([piece_index, piece_index + 8])
         if can_move_two_square:
             moves.append([piece_index, piece_index + 16])
+        if can_capture_to_left_side:
+            moves.append([piece_index, left_side])
+        if can_capture_to_right_side:
+            moves.append([piece_index, right_side])
         return moves
 
     def move_pawn(self, piece_index: int) -> list[Move]:
