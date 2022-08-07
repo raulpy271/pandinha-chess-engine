@@ -4,7 +4,7 @@ import re
 from random import choice
 
 from src.logger import logger, send_uci_msg
-from src.game import Board
+from src.game import Game
 
 
 Position = str
@@ -56,7 +56,7 @@ def start_uci_comunication():
                 if position == 'startpos':
                     raise Exception(f'Command not found: {line}')
                 else:
-                    current_game = Board.construct_board_from_fen_string(position)
+                    current_game = Game.construct_board_from_fen_string(position)
             elif 'go' in line:
                 moves = current_game.get_possible_moves()
                 if moves:
