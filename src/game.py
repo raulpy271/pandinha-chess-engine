@@ -1,6 +1,7 @@
 
 from src.board import BlackRook, Board, Player, WhitePieces, BlackPieces, Move, EmptySquare, BlackPawn, WhitePawn, WhiteRook
-from src.movements import get_all_rook_moves
+from src.movements.rook import get_all_rook_moves
+from src.movements.pawn import get_all_pawn_moves
 
 
 class Game(Board):
@@ -18,31 +19,6 @@ class Game(Board):
                 pieces.append(i)
         return pieces
 
-    def move_white_pawn(self, piece_index: int) -> list[Move]:
-        moves = []
-        pawn_in_initial_position = piece_index > 7 and piece_index < 16
-        can_move_one_square = self.squares[piece_index + 8] == EmptySquare
-        can_move_two_square = pawn_in_initial_position and can_move_one_square and self.squares[piece_index + 16] == EmptySquare
-        left_side = piece_index + 8 - 1
-        right_side = piece_index + 8 + 1
-        can_capture_to_left_side = piece_index % 8 != 0 and (self.squares[left_side] in BlackPieces)
-        can_capture_to_right_side = (piece_index + 1) % 8 != 0 and (self.squares[right_side] in BlackPieces)
-        if can_move_one_square:
-            moves.append([piece_index, piece_index + 8])
-        if can_move_two_square:
-            moves.append([piece_index, piece_index + 16])
-        if can_capture_to_left_side:
-            moves.append([piece_index, left_side])
-        if can_capture_to_right_side:
-            moves.append([piece_index, right_side])
-        return moves
-
-    def move_pawn(self, piece_index: int) -> list[Move]:
-        if self.current_player == 'White':
-            return self.move_white_pawn(piece_index)
-        else:
-            raise Exception('Not implemented black pawn move')
-
     def get_possible_moves_of_the_pawns(self, pieces_index: list[int]) -> list[Move]:
         moves = []
         pawns_index = filter(
@@ -50,7 +26,7 @@ class Game(Board):
             pieces_index
         )
         for pawn_index in pawns_index:
-            moves.extend(self.move_pawn(pawn_index))
+            moves.extend(get_all_pawn_moves(self.squares, pawn_index, self.current_player))
         return moves
 
     def get_possible_moves_of_the_rooks(self, pieces_index: list[int]) -> list[Move]:
