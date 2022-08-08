@@ -1,7 +1,8 @@
 
-from src.board import BlackRook, Board, Piece, Player, WhitePieces, BlackPieces, Move, EmptySquare, BlackPawn, WhitePawn, WhiteRook
+from src.board import BlackBishop, BlackRook, Board, Piece, Player, WhiteBishop, WhitePieces, BlackPieces, Move, EmptySquare, BlackPawn, WhitePawn, WhiteRook
 from src.movements.rook import get_all_rook_moves
 from src.movements.pawn import get_all_pawn_moves
+from src.movements.bishop import get_all_bishop_moves
 
 
 class Game(Board):
@@ -37,5 +38,8 @@ class Game(Board):
         )
         movements.extend(
             self.get_possible_moves_of_this_piece([BlackRook, WhiteRook], pieces_to_move, get_all_rook_moves)
+        )
+        movements.extend(
+            self.get_possible_moves_of_this_piece([BlackBishop, WhiteBishop], pieces_to_move, get_all_bishop_moves)
         )
         return movements
