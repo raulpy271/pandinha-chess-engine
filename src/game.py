@@ -1,9 +1,10 @@
 
-from src.board import BlackBishop, BlackQueen, BlackRook, Board, Piece, Player, WhiteBishop, WhitePieces, BlackPieces, Move, EmptySquare, BlackPawn, WhitePawn, WhiteQueen, WhiteRook
+from src.board import BlackBishop, BlackKing, BlackKnight, BlackQueen, BlackRook, Board, Piece, Player, WhiteBishop, WhiteKnight, WhitePieces, BlackPieces, Move, EmptySquare, BlackPawn, WhitePawn, WhiteQueen, WhiteRook
 from src.movements.rook import get_all_rook_moves
 from src.movements.pawn import get_all_pawn_moves
 from src.movements.bishop import get_all_bishop_moves
 from src.movements.queen import get_all_queen_moves
+from src.movements.knight import get_all_knight_moves
 
 
 class Game(Board):
@@ -45,5 +46,8 @@ class Game(Board):
         )
         movements.extend(
             self.get_possible_moves_of_this_piece([BlackQueen, WhiteQueen], pieces_to_move, get_all_queen_moves)
+        )
+        movements.extend(
+            self.get_possible_moves_of_this_piece([BlackKnight, WhiteKnight], pieces_to_move, get_all_knight_moves)
         )
         return movements

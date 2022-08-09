@@ -1,5 +1,5 @@
 
-from src.board import EmptySquare, Move
+from src.board import EmptySquare, Move, Player, BlackPieces, WhitePieces
 
 def is_in_first_line(index: int) -> bool:
     return index < 8
@@ -12,6 +12,13 @@ def is_in_first_column(index: int) -> bool:
 
 def is_in_last_column(index: int) -> bool:
     return (index + 1) % 8 == 0
+
+def can_move_to(squares, current_player: Player, index: int) -> bool:
+    if current_player == 'White':
+        adversary_pieces = BlackPieces
+    else:
+        adversary_pieces = WhitePieces
+    return squares[index] == EmptySquare or squares[index] in adversary_pieces
 
 def generate_range_of_moves(squares, piece_index: int, adversary_pieces, check_boundary, get_next_index) -> list[Move]:
     moves = []
