@@ -13,7 +13,7 @@ def is_in_first_column(index: int) -> bool:
 def is_in_last_column(index: int) -> bool:
     return (index + 1) % 8 == 0
 
-def can_move_to(squares, current_player: Player, index: int) -> bool:
+def is_free_square(squares, current_player: Player, index: int) -> bool:
     if current_player == 'White':
         adversary_pieces = BlackPieces
     else:

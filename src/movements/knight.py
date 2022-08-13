@@ -2,7 +2,7 @@
 from functools import partial
 
 from src.board import Move, Player
-from src.movements.movements_utils import is_in_first_column, is_in_first_line, is_in_last_column, is_in_last_line, can_move_to
+from src.movements.movements_utils import is_free_square, is_in_first_column, is_in_first_line, is_in_last_column, is_in_last_line
 
 def generate_left_and_right_moves(knight_index: int) -> list[Move]:
     moves = []
@@ -50,6 +50,6 @@ def get_all_knight_moves(squares, knight_index: int, current_player: Player) -> 
     moves = []
     moves.extend(generate_left_and_right_moves(knight_index))
     moves.extend(generate_forward_and_backward_moves(knight_index))
-    can_move_partial_func = partial(can_move_to, squares, current_player)
+    can_move_partial_func = partial(is_free_square, squares, current_player)
     moves = list(filter(lambda move: can_move_partial_func(move[1]), moves))
     return moves
