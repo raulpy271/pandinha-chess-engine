@@ -96,6 +96,15 @@ class Board:
         column_str = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'][column_int]
         return f'{column_str}{row_int + 1}'
 
+    def _get_king_index(self) -> int:
+        if self.current_player == 'White':
+            king = WhiteKing
+        else:
+            king = BlackKing
+        for i, piece in enumerate(self.squares):
+            if piece == king:
+                return i
+
     def get_piece(self, position_str: str) -> int:
         position_int = self._get_position_integer(position_str)
         return self.squares[position_int]

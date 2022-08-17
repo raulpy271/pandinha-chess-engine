@@ -1,4 +1,7 @@
 
+from copy import copy
+
+from src.logger import logger
 from src.board import BlackBishop, BlackKing, BlackKnight, BlackQueen, BlackRook, Board, Piece, Player, WhiteBishop, WhiteKing, WhiteKnight, WhitePieces, BlackPieces, Move, EmptySquare, BlackPawn, WhitePawn, WhiteQueen, WhiteRook
 from src.movements.rook import get_all_rook_moves
 from src.movements.pawn import get_all_pawn_moves
@@ -6,6 +9,7 @@ from src.movements.bishop import get_all_bishop_moves
 from src.movements.queen import get_all_queen_moves
 from src.movements.knight import get_all_knight_moves
 from src.movements.king import get_all_king_moves
+from src.movements.king_atack import king_is_atacked_by_bishop_or_queen, king_is_atacked_by_rook_or_queen
 
 class Game(Board):
     def __init__(self, player: Player = 'White'):
@@ -32,6 +36,30 @@ class Game(Board):
             moves.extend(function_that_create_movements_of_single_piece(self.squares, piece_index, self.current_player))
         return moves
 
+    def king_is_not_secure(self, king_index: int) -> bool:
+        return any([
+            king_is_atacked_by_bishop_or_queen(self.squares, king_index, self.current_player),
+            king_is_atacked_by_rook_or_queen(self.squares, king_index, self.current_player)
+        ])
+
+    def apply_moves(self, moves: list[Move]) -> "Game":
+        board = Game(self.current_player)
+        board.squares = copy(self.squares)
+        for start_move, end_move in moves:
+            board.squares[end_move] = board.squares[start_move]
+            board.squares[start_move] = EmptySquare
+        return board
+
+    def filter_movements_which_king_is_secure(self, moves: list[Move]) -> list[Move]:
+        def is_secure_move(move):
+            board = self.apply_moves([move])
+            king_index = board._get_king_index()
+            return not board.king_is_not_secure(king_index)
+        logger.info(f'movements: {moves}')
+        moves = list(filter(is_secure_move, moves))
+        logger.info(f'movements after filter: {moves}')
+        return moves
+
     def get_possible_moves(self) -> list[Move]:
         movements = []
         pieces_to_move = self._get_pieces_of_the_current_player()
@@ -53,4 +81,4 @@ class Game(Board):
         movements.extend(
             self.get_possible_moves_of_this_piece([BlackKing, WhiteKing], pieces_to_move, get_all_king_moves)
         )
-        return movements
+        return self.filter_movements_which_king_is_secure(movements)
