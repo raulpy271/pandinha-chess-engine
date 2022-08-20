@@ -2,6 +2,7 @@
 from array import array
 from typing import Literal
 
+from src.logger import logger
 from src.utils import decode_ascii_char
 from src.fen_parser import parse_piece_placement
 
@@ -26,6 +27,11 @@ Move = list[int, int]
 Player = Literal['White', 'Black']
 EmptySquare = 0
 
+def flip_player(p: Player) -> Player:
+    if p == 'White':
+        return 'Black'
+    else:
+        return 'White'
 
 class Board:
     def __init__(self, player: Player = 'White'):
@@ -104,6 +110,8 @@ class Board:
         for i, piece in enumerate(self.squares):
             if piece == king:
                 return i
+        logger.info(str(self))
+        raise Exception(f'Board without {self.current_player} King!')
 
     def get_piece(self, position_str: str) -> int:
         position_int = self._get_position_integer(position_str)

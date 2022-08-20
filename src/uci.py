@@ -5,6 +5,7 @@ from random import choice
 
 from src.logger import logger, send_uci_msg
 from src.game import Game
+from src.search import search
 
 
 Position = str
@@ -58,13 +59,9 @@ def start_uci_comunication():
                 else:
                     current_game = Game.construct_board_from_fen_string(position)
             elif 'go' in line:
-                moves = current_game.get_possible_moves()
-                if moves:
-                    move = choice(moves)
-                    move_str = current_game.construct_move_str(move)
-                    send_uci_msg(f'bestmove {move_str}')
-                else:
-                    send_uci_msg('info string There\'s any good move')
+                move = search(current_game)
+                move_str = current_game.construct_move_str(move)
+                send_uci_msg(f'bestmove {move_str}')
             elif line == 'quit\n':
                 break
             else:

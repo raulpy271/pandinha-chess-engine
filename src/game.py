@@ -2,7 +2,7 @@
 from copy import copy
 
 from src.logger import logger
-from src.board import BlackBishop, BlackKing, BlackKnight, BlackQueen, BlackRook, Board, Piece, Player, WhiteBishop, WhiteKing, WhiteKnight, WhitePieces, BlackPieces, Move, EmptySquare, BlackPawn, WhitePawn, WhiteQueen, WhiteRook
+from src.board import BlackBishop, BlackKing, BlackKnight, BlackQueen, BlackRook, Board, Piece, Player, WhiteBishop, WhiteKing, WhiteKnight, WhitePieces, BlackPieces, Move, EmptySquare, BlackPawn, WhitePawn, WhiteQueen, WhiteRook, flip_player
 from src.movements.rook import get_all_rook_moves
 from src.movements.pawn import get_all_pawn_moves
 from src.movements.bishop import get_all_bishop_moves
@@ -42,22 +42,25 @@ class Game(Board):
             king_is_atacked_by_rook_or_queen(self.squares, king_index, self.current_player)
         ])
 
-    def apply_moves(self, moves: list[Move]) -> "Game":
+    def apply_move(self, move: Move) -> "Game":
         board = Game(self.current_player)
         board.squares = copy(self.squares)
-        for start_move, end_move in moves:
-            board.squares[end_move] = board.squares[start_move]
-            board.squares[start_move] = EmptySquare
+        start_move, end_move = move
+        board.squares[end_move] = board.squares[start_move]
+        board.squares[start_move] = EmptySquare
+        return board
+
+    def execute_move(self, move: Move) -> "Game":
+        board = self.apply_move(move)
+        board.current_player = flip_player(self.current_player)
         return board
 
     def filter_movements_which_king_is_secure(self, moves: list[Move]) -> list[Move]:
         def is_secure_move(move):
-            board = self.apply_moves([move])
+            board = self.apply_move(move)
             king_index = board._get_king_index()
             return not board.king_is_not_secure(king_index)
-        logger.info(f'movements: {moves}')
         moves = list(filter(is_secure_move, moves))
-        logger.info(f'movements after filter: {moves}')
         return moves
 
     def get_possible_moves(self) -> list[Move]:
