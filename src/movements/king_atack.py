@@ -1,7 +1,8 @@
 
-from src.board import BlackBishop, BlackKnight, BlackQueen, BlackRook, Player, Move, WhiteBishop, WhiteKnight, WhiteQueen, WhiteRook
+from src.board import BlackBishop, BlackKnight, BlackPawn, BlackQueen, BlackRook, Player, Move, WhiteBishop, WhiteKnight, WhitePawn, WhiteQueen, WhiteRook
 from src.movements.bishop import get_all_bishop_moves
 from src.movements.knight import get_all_knight_moves
+from src.movements.movements_utils import is_in_first_column, is_in_last_column
 from src.movements.rook import get_all_rook_moves
 
 
@@ -28,3 +29,21 @@ def king_is_atacked_by_knight(squares, king_index: int, current_player: Player) 
         piece_that_can_atack = WhiteKnight 
     possible_knight_moves = get_all_knight_moves(squares, king_index, current_player)
     return any(map(lambda move: squares[move[1]] == piece_that_can_atack, possible_knight_moves))
+
+def king_is_atacked_by_pawn(squares, king_index: int, current_player: Player) -> bool:
+    possible_atacks = []
+    if current_player == 'White':
+        piece_that_can_atack = BlackPawn
+        if not is_in_first_column(king_index):
+            possible_atacks.append((king_index + 8) - 1)
+        if not is_in_last_column(king_index):
+            possible_atacks.append((king_index + 8) + 1)
+    else:
+        piece_that_can_atack = WhitePawn
+        if not is_in_first_column(king_index):
+            possible_atacks.append((king_index - 8) - 1)
+        if not is_in_last_column(king_index):
+            possible_atacks.append((king_index - 8) + 1)
+    return any(map(
+        lambda atack_index: squares[atack_index] == piece_that_can_atack, possible_atacks
+    ))
