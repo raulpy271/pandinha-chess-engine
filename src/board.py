@@ -60,8 +60,10 @@ class Board:
         board = cls()
         fen_parts = fen_string.split(' ')
         piece_placement_part = fen_parts[0]
+        current_turn = 'White' if fen_parts[1] == 'w' else 'Black'
         pieces = parse_piece_placement(piece_placement_part)
         board.squares = array('b', pieces)
+        board.current_player = current_turn
         return board
 
     def construct_move_str(self, move: Move) -> str:
