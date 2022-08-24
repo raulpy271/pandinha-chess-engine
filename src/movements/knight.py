@@ -1,4 +1,5 @@
 
+from typing import Iterator
 from functools import partial
 
 from src.board import Move, Player
@@ -46,10 +47,10 @@ def generate_forward_and_backward_moves(knight_index: int) -> list[Move]:
             moves.append([knight_index, (knight_index + 16) - 1])
     return moves
 
-def get_all_knight_moves(squares, knight_index: int, current_player: Player) -> list[Move]:
+def get_all_knight_moves(squares, knight_index: int, current_player: Player) -> Iterator[Move]:
     moves = []
     moves.extend(generate_left_and_right_moves(knight_index))
     moves.extend(generate_forward_and_backward_moves(knight_index))
     can_move_partial_func = partial(is_free_square, squares, current_player)
     moves = list(filter(lambda move: can_move_partial_func(move[1]), moves))
-    return moves
+    return iter(moves)

@@ -1,6 +1,6 @@
 
 from array import array
-from typing import Literal
+from typing import Literal, Generator
 
 from src.logger import logger
 from src.utils import decode_ascii_char
@@ -24,6 +24,7 @@ BlackPieces = (BlackPawn, BlackBishop, BlackKnight, BlackRook, BlackQueen, Black
 
 Piece = int
 Move = list[int, int]
+MoveGenerator = Generator[Move, None, None]
 Player = Literal['White', 'Black']
 EmptySquare = 0
 

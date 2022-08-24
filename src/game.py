@@ -1,5 +1,7 @@
 
 from copy import copy
+from typing import Iterator
+import itertools
 
 from src.logger import logger
 from src.board import BlackBishop, BlackKing, BlackKnight, BlackQueen, BlackRook, Board, Piece, Player, WhiteBishop, WhiteKing, WhiteKnight, WhitePieces, BlackPieces, Move, EmptySquare, BlackPawn, WhitePawn, WhiteQueen, WhiteRook, flip_player
@@ -26,15 +28,15 @@ class Game(Board):
                 pieces.append(i)
         return pieces
 
-    def get_possible_moves_of_this_piece(self, pieces_type: list[Piece], all_pieces: list[int], function_that_create_movements_of_single_piece) -> list[Move]:
-        moves = []
+    def get_possible_moves_of_this_piece(self, pieces_type: list[Piece], all_pieces: list[int], function_that_create_movements_of_single_piece) -> Iterator[Move]:
+        iterators = []
         pieces_index = filter(
             lambda piece_index: self.squares[piece_index] in pieces_type, 
             all_pieces
         )
         for piece_index in pieces_index:
-            moves.extend(function_that_create_movements_of_single_piece(self.squares, piece_index, self.current_player))
-        return moves
+            iterators.append(function_that_create_movements_of_single_piece(self.squares, piece_index, self.current_player))
+        return itertools.chain.from_iterable(iterators) 
 
     def king_is_not_secure(self, king_index: int) -> bool:
         return any([
@@ -57,33 +59,34 @@ class Game(Board):
         board.current_player = flip_player(self.current_player)
         return board
 
-    def filter_movements_which_king_is_secure(self, moves: list[Move]) -> list[Move]:
+    def filter_movements_which_king_is_secure(self, moves: Iterator[Move]) -> Iterator[Move]:
         def is_secure_move(move):
             board = self.apply_move(move)
             king_index = board._get_king_index()
             return not board.king_is_not_secure(king_index)
-        moves = list(filter(is_secure_move, moves))
+        moves = filter(is_secure_move, moves)
         return moves
 
-    def get_possible_moves(self) -> list[Move]:
-        movements = []
+    def get_possible_moves(self) -> Iterator[Move]:
+        iterators = []
         pieces_to_move = self._get_pieces_of_the_current_player()
-        movements.extend(
+        iterators.append(
             self.get_possible_moves_of_this_piece([BlackPawn, WhitePawn], pieces_to_move, get_all_pawn_moves)
         )
-        movements.extend(
+        iterators.append(
             self.get_possible_moves_of_this_piece([BlackRook, WhiteRook], pieces_to_move, get_all_rook_moves)
         )
-        movements.extend(
+        iterators.append(
             self.get_possible_moves_of_this_piece([BlackBishop, WhiteBishop], pieces_to_move, get_all_bishop_moves)
         )
-        movements.extend(
+        iterators.append(
             self.get_possible_moves_of_this_piece([BlackQueen, WhiteQueen], pieces_to_move, get_all_queen_moves)
         )
-        movements.extend(
+        iterators.append(
             self.get_possible_moves_of_this_piece([BlackKnight, WhiteKnight], pieces_to_move, get_all_knight_moves)
         )
-        movements.extend(
+        iterators.append(
             self.get_possible_moves_of_this_piece([BlackKing, WhiteKing], pieces_to_move, get_all_king_moves)
         )
-        return self.filter_movements_which_king_is_secure(movements)
+        movements_iterators = itertools.chain.from_iterable(iterators)
+        return self.filter_movements_which_king_is_secure(movements_iterators)

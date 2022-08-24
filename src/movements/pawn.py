@@ -1,9 +1,8 @@
 
-from src.board import Move, EmptySquare, BlackPieces, Player, WhitePieces
+from src.board import Move, EmptySquare, BlackPieces, Player, WhitePieces, MoveGenerator
 from src.movements.movements_utils import is_in_last_column, is_in_first_column
 
-def move_white_pawn(squares, piece_index: int) -> list[Move]:
-    moves = []
+def move_white_pawn(squares, piece_index: int) -> MoveGenerator:
     pawn_in_initial_position = piece_index > 7 and piece_index < 16
     can_move_one_square = squares[piece_index + 8] == EmptySquare
     can_move_two_square = pawn_in_initial_position and can_move_one_square and squares[piece_index + 16] == EmptySquare
@@ -12,17 +11,15 @@ def move_white_pawn(squares, piece_index: int) -> list[Move]:
     can_capture_to_left_side = piece_index % 8 != 0 and (squares[left_side] in BlackPieces)
     can_capture_to_right_side = (piece_index + 1) % 8 != 0 and (squares[right_side] in BlackPieces)
     if can_move_one_square:
-        moves.append([piece_index, piece_index + 8])
+        yield [piece_index, piece_index + 8]
     if can_move_two_square:
-        moves.append([piece_index, piece_index + 16])
+        yield [piece_index, piece_index + 16]
     if can_capture_to_left_side:
-        moves.append([piece_index, left_side])
+        yield [piece_index, left_side]
     if can_capture_to_right_side:
-        moves.append([piece_index, right_side])
-    return moves
+        yield [piece_index, right_side]
 
-def move_black_pawn(squares, piece_index: int) -> list[Move]:
-    moves = []
+def move_black_pawn(squares, piece_index: int) -> MoveGenerator:
     pawn_in_initial_position = piece_index > 47 and piece_index < 56
     can_move_one_square = squares[piece_index - 8] == EmptySquare
     can_move_two_square = pawn_in_initial_position and can_move_one_square and squares[piece_index - 16] == EmptySquare
@@ -33,16 +30,15 @@ def move_black_pawn(squares, piece_index: int) -> list[Move]:
     can_capture_to_left_side = not pawn_is_in_first_column and (squares[left_side] in WhitePieces)
     can_capture_to_right_side = not pawn_is_in_last_column and (squares[right_side] in WhitePieces)
     if can_move_one_square:
-        moves.append([piece_index, piece_index - 8])
+        yield [piece_index, piece_index - 8]
     if can_move_two_square:
-        moves.append([piece_index, piece_index - 16])
+        yield [piece_index, piece_index - 16]
     if can_capture_to_left_side:
-        moves.append([piece_index, left_side])
+        yield [piece_index, left_side]
     if can_capture_to_right_side:
-        moves.append([piece_index, right_side])
-    return moves
+        yield [piece_index, right_side]
 
-def get_all_pawn_moves(squares, piece_index: int, current_player: Player) -> list[Move]:
+def get_all_pawn_moves(squares, piece_index: int, current_player: Player) -> MoveGenerator:
     if current_player == 'White':
         return move_white_pawn(squares, piece_index)
     else:
