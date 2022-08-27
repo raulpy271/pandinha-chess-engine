@@ -13,6 +13,12 @@ def is_in_first_column(index: int) -> bool:
 def is_in_last_column(index: int) -> bool:
     return (index + 1) % 8 == 0
 
+def is_in_sevent_line(index: int) -> bool:
+    return index >= (8 * 6) and index < (8 * 7)
+
+def is_in_second_line(index: int) -> bool:
+    return index >= 8 and index < (8 * 2)
+
 def is_free_square(squares, current_player: Player, index: int) -> bool:
     if current_player == 'White':
         adversary_pieces = BlackPieces

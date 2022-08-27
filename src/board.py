@@ -21,6 +21,8 @@ WhiteQueen  = ord('Q')
 WhiteKing   = ord('K')
 WhitePieces = (WhitePawn, WhiteBishop, WhiteKnight, WhiteRook, WhiteQueen, WhiteKing)
 BlackPieces = (BlackPawn, BlackBishop, BlackKnight, BlackRook, BlackQueen, BlackKing)
+PromotionToQueen = BlackQueen
+PromotionToKnight = BlackKnight
 
 Piece = int
 Move = list[int, int]
@@ -70,6 +72,12 @@ class Board:
     def construct_move_str(self, move: Move) -> str:
         current_pos_str = self._get_position_str(move[0])
         next_pos_str = self._get_position_str(move[1])
+        if len(move) > 2:
+            if move[2] == PromotionToKnight:
+                promotion_piece = 'n'
+            else:
+                promotion_piece = 'q'
+            return current_pos_str + next_pos_str + promotion_piece
         return current_pos_str + next_pos_str
 
     def __str__(self):

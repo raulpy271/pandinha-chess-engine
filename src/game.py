@@ -4,7 +4,7 @@ from typing import Iterator
 import itertools
 
 from src.logger import logger
-from src.board import BlackBishop, BlackKing, BlackKnight, BlackQueen, BlackRook, Board, Piece, Player, WhiteBishop, WhiteKing, WhiteKnight, WhitePieces, BlackPieces, Move, EmptySquare, BlackPawn, WhitePawn, WhiteQueen, WhiteRook, flip_player
+from src.board import BlackBishop, BlackKing, BlackKnight, BlackQueen, BlackRook, Board, Piece, Player, PromotionToKnight, WhiteBishop, WhiteKing, WhiteKnight, WhitePieces, BlackPieces, Move, EmptySquare, BlackPawn, WhitePawn, WhiteQueen, WhiteRook, flip_player
 from src.movements.rook import get_all_rook_moves
 from src.movements.pawn import get_all_pawn_moves
 from src.movements.bishop import get_all_bishop_moves
@@ -49,10 +49,27 @@ class Game(Board):
     def apply_move(self, move: Move) -> "Game":
         board = Game(self.current_player)
         board.squares = copy(self.squares)
-        start_move, end_move = move
-        board.squares[end_move] = board.squares[start_move]
-        board.squares[start_move] = EmptySquare
-        return board
+        is_promotion = len(move) > 2
+        if is_promotion:
+            start_move, end_move, promotion = move
+            if promotion == PromotionToKnight:
+                if self.current_player == 'Black':
+                    promotion_piece = BlackKnight
+                else:
+                    promotion_piece = WhiteKnight
+            else:
+                if self.current_player == 'Black':
+                    promotion_piece = BlackQueen
+                else:
+                    promotion_piece = WhiteQueen
+            board.squares[end_move] = promotion_piece
+            board.squares[start_move] = EmptySquare
+            return board
+        else:
+            start_move, end_move = move
+            board.squares[end_move] = board.squares[start_move]
+            board.squares[start_move] = EmptySquare
+            return board
 
     def execute_move(self, move: Move) -> "Game":
         board = self.apply_move(move)
