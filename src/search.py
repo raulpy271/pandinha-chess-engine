@@ -38,15 +38,27 @@ def search_value(game: Game, depth: int, alpha: float, beta: float) -> float:
 def search(game: Game) -> Move:
     alpha = -inf
     beta = inf
-    best_valuation: float = - inf
     best_moves: list[Move] = []
-    for legal_move in game.get_possible_moves():
-        current_valuation = search_value(game.execute_move(legal_move), settings.DEPTH - 1, alpha, beta)
-        logger.info(f'Valuation of the move {game.construct_move_str(legal_move)}: {current_valuation}')
-        if current_valuation > best_valuation:
-            best_valuation = current_valuation
-            best_moves = [legal_move]
-        elif current_valuation == best_valuation:
-            best_moves.append(legal_move)
+    best_valuation: float = 0
+    if game.current_player == 'White':
+        best_valuation = - inf
+        for legal_move in game.get_possible_moves():
+            current_valuation = search_value(game.execute_move(legal_move), settings.DEPTH - 1, alpha, beta)
+            logger.info(f'Valuation of the move {game.construct_move_str(legal_move)}: {current_valuation}')
+            if current_valuation > best_valuation:
+                best_valuation = current_valuation
+                best_moves = [legal_move]
+            elif current_valuation == best_valuation:
+                best_moves.append(legal_move)
+    else:
+        best_valuation = inf
+        for legal_move in game.get_possible_moves():
+            current_valuation = search_value(game.execute_move(legal_move), settings.DEPTH - 1, alpha, beta)
+            logger.info(f'Valuation of the move {game.construct_move_str(legal_move)}: {current_valuation}')
+            if current_valuation < best_valuation:
+                best_valuation = current_valuation
+                best_moves = [legal_move]
+            elif current_valuation == best_valuation:
+                best_moves.append(legal_move)
     send_uci_msg(f'info depth {settings.DEPTH} score cp {best_valuation}')
     return choice(best_moves)
