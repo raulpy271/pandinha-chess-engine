@@ -1,6 +1,9 @@
 
 from math import inf
 from random import choice
+from multiprocessing.pool import Pool
+from itertools import starmap
+from typing import Optional
 
 from src import settings
 from src.logger import logger, send_uci_msg
@@ -35,30 +38,39 @@ def search_value(game: Game, depth: int, alpha: float, beta: float) -> float:
                 break
     return best_valuation
 
-def search(game: Game) -> Move:
+def search_and_get_move(game, move):
     alpha = -inf
     beta = inf
+    valuation = search_value(game.execute_move(move), settings.DEPTH - 1, alpha, beta)
+    logger.info(f'Valuation of the move {game.construct_move_str(move)}: {valuation}')
+    return valuation, move
+
+def search(game: Game, worker_pool: Optional[Pool] = None) -> Move:
     best_moves: list[Move] = []
     best_valuation: float = 0
+    pair_game_moves: map[tuple[Game, Move]] = map(
+        lambda move: (game, move),
+        game.get_possible_moves()
+    )
+    if worker_pool:
+            valuation_and_moves = worker_pool.starmap(search_and_get_move, pair_game_moves)
+    else:
+        valuation_and_moves = list(starmap(search_and_get_move, pair_game_moves))
     if game.current_player == 'White':
         best_valuation = - inf
-        for legal_move in game.get_possible_moves():
-            current_valuation = search_value(game.execute_move(legal_move), settings.DEPTH - 1, alpha, beta)
-            logger.info(f'Valuation of the move {game.construct_move_str(legal_move)}: {current_valuation}')
-            if current_valuation > best_valuation:
-                best_valuation = current_valuation
-                best_moves = [legal_move]
-            elif current_valuation == best_valuation:
-                best_moves.append(legal_move)
+        for value, move in valuation_and_moves:
+            if value > best_valuation:
+                best_valuation = value
+                best_moves = [move]
+            elif value == best_valuation:
+                best_moves.append(move)
     else:
         best_valuation = inf
-        for legal_move in game.get_possible_moves():
-            current_valuation = search_value(game.execute_move(legal_move), settings.DEPTH - 1, alpha, beta)
-            logger.info(f'Valuation of the move {game.construct_move_str(legal_move)}: {current_valuation}')
-            if current_valuation < best_valuation:
-                best_valuation = current_valuation
-                best_moves = [legal_move]
-            elif current_valuation == best_valuation:
-                best_moves.append(legal_move)
+        for value, move in valuation_and_moves:
+            if value < best_valuation:
+                best_valuation = value
+                best_moves = [move]
+            elif value == best_valuation:
+                best_moves.append(move)
     send_uci_msg(f'info depth {settings.DEPTH} score cp {best_valuation}')
     return choice(best_moves)
