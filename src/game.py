@@ -11,7 +11,7 @@ from src.movements.bishop import get_all_bishop_moves
 from src.movements.queen import get_all_queen_moves
 from src.movements.knight import get_all_knight_moves
 from src.movements.king import get_all_king_moves
-from src.movements.king_atack import king_is_atacked_by_bishop_or_queen, king_is_atacked_by_knight, king_is_atacked_by_pawn, king_is_atacked_by_rook_or_queen
+from src.movements.king_atack import king_is_atacked_by_bishop_or_queen, king_is_atacked_by_knight, king_is_atacked_by_oponent_king, king_is_atacked_by_pawn, king_is_atacked_by_rook_or_queen
 
 class Game(Board):
     def __init__(self, player: Player = 'White'):
@@ -43,7 +43,8 @@ class Game(Board):
             king_is_atacked_by_bishop_or_queen(self.squares, king_index, self.current_player),
             king_is_atacked_by_rook_or_queen(self.squares, king_index, self.current_player),
             king_is_atacked_by_knight(self.squares, king_index, self.current_player),
-            king_is_atacked_by_pawn(self.squares, king_index, self.current_player)
+            king_is_atacked_by_pawn(self.squares, king_index, self.current_player),
+            king_is_atacked_by_oponent_king(self.squares, king_index, self.current_player)
         ])
 
     def apply_move(self, move: Move) -> "Game":
