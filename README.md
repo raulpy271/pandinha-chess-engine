@@ -4,6 +4,22 @@ Pandinha-engine is a chess engine that use [MinMax Algorithm](https://en.wikiped
 
 The engine follows the [UCI Protocol](http://wbec-ridderkerk.nl/html/UCIProtocol.html), so it works with any GUI that accepts custom engines especified with the UCI Protocol.
 
+# Especification
+
+## Evaluation
+
+The evaluation function is purely material-based, which use the standard weights:
+
+ - Pawn: 1
+ - Bishop: 3
+ - Knight: 3
+ - Rook: 5
+ - Queen: 9
+
+## GUI's
+
+The recommended GUI is [jerry](https://github.com/asdfjkl/jerry) because the engines were tested using this GUI. However, soon all the UCI commands will be implemented to allow the engine to work with all UCI GUI's.
+
 # Screenshots
 
 ![human vs IA](/assets/playing.gif)
