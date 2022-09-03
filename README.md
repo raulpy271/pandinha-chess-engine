@@ -8,7 +8,25 @@ The engine follows the [UCI Protocol](http://wbec-ridderkerk.nl/html/UCIProtocol
 
 ![human vs IA](/assets/playing.gif)
 
+# Usage
+
 # Especification
+
+## GUI's
+
+The recommended GUI is [jerry](https://github.com/asdfjkl/jerry) because the engines were tested using this GUI. However, soon all the UCI commands will be implemented to allow the engine to work with all UCI GUI's.
+
+## Processing Model
+
+The search can be done sequential or can be parallel, in the parallel approach, is created a pool of processes.
+
+## Move generation
+
+To generate moves is created a function that return a python generator, where the moves are computed on demand, this is useful because when some nodes are cutted-off the remaining moves aren't calculated.
+
+## Board Representation
+
+To represent the board is used a square-centric approach, where the board is an array with 64 integer values, where each integer represent a colored piece or an empty square.
 
 ## Evaluation
 
@@ -20,10 +38,10 @@ The evaluation function is purely material-based, which use the standard weights
  - Rook: 5
  - Queen: 9
 
-## GUI's
-
-The recommended GUI is [jerry](https://github.com/asdfjkl/jerry) because the engines were tested using this GUI. However, soon all the UCI commands will be implemented to allow the engine to work with all UCI GUI's.
-
 # References
 
  - NORVIG, P.; RUSSELL, S. Inteligência Artificial. Elsevier, 3a ed., 2013.
+ - [Board representation - Chess Programming ](https://www.chessprogramming.org/Board_Representation)
+ - [Move generation - Chess Programming ](https://www.chessprogramming.org/Move_Generation)
+ - [Python Generators](https://www.geeksforgeeks.org/generators-in-python/)
+
