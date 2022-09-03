@@ -10,11 +10,13 @@ The engine follows the [UCI Protocol](http://wbec-ridderkerk.nl/html/UCIProtocol
 
 # Usage
 
-# Especification
+To use the engine you need to install an GUI's that supports the UCI Protocol to communicate with the engine. 
 
-## GUI's
+After installing a GUI, access the `src/settings.py` file and change the values to your preference. Also, you need figure out how to add a custom engine in your GUI, by doing that add the engine main file path: `main.py`.
 
 The recommended GUI is [jerry](https://github.com/asdfjkl/jerry) because the engines were tested using this GUI. However, soon all the UCI commands will be implemented to allow the engine to work with all UCI GUI's.
+
+# Especification
 
 ## Processing Model
 
