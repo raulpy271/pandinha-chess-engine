@@ -8,6 +8,22 @@ The engine follows the [UCI Protocol](http://wbec-ridderkerk.nl/html/UCIProtocol
 
 ![human vs IA](/assets/playing.gif)
 
+# Especification
+
+## Evaluation
+
+The evaluation function is purely material-based, which use the standard weights:
+
+ - Pawn: 1
+ - Bishop: 3
+ - Knight: 3
+ - Rook: 5
+ - Queen: 9
+
+## GUI's
+
+The recommended GUI is [jerry](https://github.com/asdfjkl/jerry) because the engines were tested using this GUI. However, soon all the UCI commands will be implemented to allow the engine to work with all UCI GUI's.
+
 # References
 
  - NORVIG, P.; RUSSELL, S. Inteligência Artificial. Elsevier, 3a ed., 2013.
