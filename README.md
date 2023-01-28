@@ -63,8 +63,8 @@ The project was developed as a learning proposal, so some features to turn this 
 
 ## Contributing
 
-As shown in [TODO](/README.md#TODO) section, there is a lot of work to complete, I am open to accepting pull requests implementing some of these features. 
+As shown in [TODO](#TODO) section, there is a lot of work to complete, I am open to accepting pull requests implementing some of these features. 
 
 ## License
 
-Released under the MIT License. See [LICENSE.md](/LICENSE.md) for details.
+Released under the MIT License. See [LICENSE.md](/LICENSE) for details.
